@@ -64,6 +64,11 @@ function () {
     value: function getMetadata() {
       return this.options.metadata;
     }
+  }, {
+    key: "getPattern",
+    value: function getPattern() {
+      return this.options.pattern;
+    }
   }]);
 
   return Options;

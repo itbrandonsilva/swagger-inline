@@ -1,5 +1,11 @@
 "use strict";
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 var Promise = require('bluebird');
 
 var jsYaml = require('js-yaml');
@@ -60,6 +66,7 @@ function swaggerInline(globPatterns, providedOptions) {
   var options = new Options(providedOptions);
   var log = options.getLogger();
   var base = options.getBase();
+  var pattern = options.getPattern();
 
   if (!base) {
     throw new Error('No base specification provided!');
@@ -87,17 +94,21 @@ function swaggerInline(globPatterns, providedOptions) {
         var schemas = [];
         successfulFiles.forEach(function (fileInfo) {
           try {
-            var newEndpoints = Extractor.extractEndpointsFromCode(fileInfo.fileData, {
+            var newEndpoints = Extractor.extractEndpointsFromCode(fileInfo.fileData, _objectSpread({
               filename: fileInfo.fileName,
               scope: options.getScope()
-            });
+            }, pattern && {
+              pattern: pattern
+            }));
             newEndpoints = Loader.addResponse(newEndpoints);
             newEndpoints = Loader.expandParams(newEndpoints, swaggerVersion);
             endpoints = _.concat(endpoints, newEndpoints);
-            var scheme = Extractor.extractSchemasFromCode(fileInfo.fileData, {
+            var scheme = Extractor.extractSchemasFromCode(fileInfo.fileData, _objectSpread({
               filename: fileInfo.fileName,
               scope: options.getScope()
-            });
+            }, pattern && {
+              pattern: pattern
+            }));
 
             _.remove(scheme, function (s) {
               return _.isEmpty(s);
