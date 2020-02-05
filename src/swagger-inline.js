@@ -48,6 +48,7 @@ function swaggerInline(globPatterns, providedOptions) {
   const options = new Options(providedOptions);
   const log = options.getLogger();
   const base = options.getBase();
+  const pattern = options.getPattern();
 
   if (!base) {
     throw new Error('No base specification provided!');
@@ -79,6 +80,7 @@ function swaggerInline(globPatterns, providedOptions) {
             let newEndpoints = Extractor.extractEndpointsFromCode(fileInfo.fileData, {
               filename: fileInfo.fileName,
               scope: options.getScope(),
+              ...pattern && {pattern},
             });
 
             newEndpoints = Loader.addResponse(newEndpoints);
@@ -89,6 +91,7 @@ function swaggerInline(globPatterns, providedOptions) {
             const scheme = Extractor.extractSchemasFromCode(fileInfo.fileData, {
               filename: fileInfo.fileName,
               scope: options.getScope(),
+              ...pattern && {pattern},
             });
             _.remove(scheme, s => {
               return _.isEmpty(s);

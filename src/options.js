@@ -41,6 +41,10 @@ class Options {
   getMetadata() {
     return this.options.metadata;
   }
+
+  getPattern() {
+    return this.options.pattern;
+  }
 }
 
 Options.DEFAULTS = {
